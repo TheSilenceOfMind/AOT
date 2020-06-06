@@ -26,6 +26,21 @@ def levenshtein_distance(s, t):
     return res
 
 
+def levenshtein_distance_efficient(s, t):
+    s_len = len(s)
+    t_len = len(t)
+    D = [[0] * (t_len + 1) for i in range(s_len + 1)]
+    for i in range(s_len + 1):
+        D[i][0] = i
+    for j in range(t_len + 1):
+        D[0][j] = j
+    for i in range(1, s_len + 1):
+        for j in range(1, t_len + 1):
+            c = 0 if s[i - 1] == t[j - 1] else 1
+            D[i][j] = min(D[i - 1][j] + 1, D[i][j - 1] + 1, D[i - 1][j - 1] + c)
+    return D[s_len][t_len]
+
+
 def jaro_winkler_distance(first, second, winkler=True, winkler_ajustment=True, scaling=0.1):
     jaro = _score(first, second)
     cl = min(len(_get_prefix(first, second)), 4)
