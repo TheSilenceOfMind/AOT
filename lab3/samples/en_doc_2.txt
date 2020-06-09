@@ -1,0 +1,134 @@
+This tutorial will see different stemmers available in different languages in Python nltk. For the English language, you can choose between PorterStammer or LancasterStammer, PorterStemmer being the oldest one originally developed in 1979. LancasterStemmer was developed in 1990 and uses a more aggressive approach than Porter Stemming Algorithm. Let's try out the PorterStemmer to stem words, and along with it you will see how it, is stemming the words. This tutorial will not go deep into the algorithm of the Porter Stemmer and LancasterStemmer also known as (Paice-Husk Stemmer), but you will see their advantages and disadvantages.
+
+Stemming Words
+from nltk.stem import PorterStemmer
+from nltk.stem import LancasterStemmer
+nltk.stem is a package that performs stemming using different classes. PorterStemmer is one of the classes, so we import it using the above line of code.
+
+#create an object of class PorterStemmer
+porter = PorterStemmer()
+lancaster=LancasterStemmer()
+#proide a word to be stemmed
+print("Porter Stemmer")
+print(porter.stem("cats"))
+print(porter.stem("trouble"))
+print(porter.stem("troubling"))
+print(porter.stem("troubled"))
+print("Lancaster Stemmer")
+print(lancaster.stem("cats"))
+print(lancaster.stem("trouble"))
+print(lancaster.stem("troubling"))
+print(lancaster.stem("troubled"))
+Porter Stemmer
+cat
+troubl
+troubl
+troubl
+Lancaster Stemmer
+cat
+troubl
+troubl
+troubl
+PorterStemmer uses Suffix Stripping to produce stems. Notice how the PorterStemmer is giving the root (stem) of the word "cats" by simply removing the 's' after cat. This is a suffix added to cat to make it plural. But if you look at 'trouble', 'troubling' and 'troubled' they are stemmed to 'trouble' because **PorterStemmer algorithm does not follow linguistics rather a set of 05 rules for different cases that are applied in phases (step by step) to generate stems**. This is the reason why PorterStemmer does not often generate stems that are actual English words. It does not keep a lookup table for actual stems of the word but applies algorithmic rules to generate stems. It uses the rules to decide whether it is wise to strip a suffix. One can generate its own set of rules for any language that is why Python nltk introduced SnowballStemmers that are used to create non-English Stemmers!
+
+So Why use it? PorterStemmer is known for its simplicity and speed. It is commonly useful in Information Retrieval Environments known as IR Environments for fast recall and fetching of search queries. In a typical IR, environment documents are represented as vectors of words or terms. Words having the same stem will have a similar meaning. For example,
+
+CONNECT
+CONNECTIONS------> CONNECT
+CONNECTED------> CONNECT
+CONNECTING------> CONNECT
+CONNECTION------> CONNECT
+
+Try out the following in your Python environment:
+
+#A list of words to be stemmed
+word_list = ["friend", "friendship", "friends", "friendships","stabil","destabilize","misunderstanding","railroad","moonlight","football"]
+print("{0:20}{1:20}{2:20}".format("Word","Porter Stemmer","lancaster Stemmer"))
+for word in word_list:
+    print("{0:20}{1:20}{2:20}".format(word,porter.stem(word),lancaster.stem(word)))
+Word                Porter Stemmer      Lancaster Stemmer
+friend              friend              friend
+friendship          friendship          friend
+friends             friend              friend
+friendships         friendship          friend
+stabil              stabil              stabl
+destabilize         destabil            dest
+misunderstanding    misunderstand       misunderstand
+railroad            railroad            railroad
+moonlight           moonlight           moonlight
+football            footbal             footbal
+The LancasterStemmer (Paice-Husk stemmer) is an iterative algorithm with rules saved externally. One table containing about 120 rules indexed by the last letter of a suffix. On each iteration, it tries to find an applicable rule by the last character of the word. Each rule specifies either a deletion or replacement of an ending. If there is no such rule, it terminates. It also terminates if a word starts with a vowel and there are only two letters left or if a word starts with a consonant and there are only three characters left. Otherwise, the rule is applied, and the process repeats.
+
+LancasterStemmer is simple, but heavy stemming due to iterations and over-stemming may occur. Over-stemming causes the stems to be not linguistic, or they may have no meaning.
+
+For example, in above code destabilized is stemmed to dest in LancasterStemmer whereas, using PorterStemmer destabl. LancasterStemmer produces an even shorter stem than porter because of iterations and over-stemming is occurred.
+
+Stemming Sentences
+You can stem sentences and documents using nltk stemmers. You can stem sentences as follows:
+
+sentence="Pythoners are very intelligent and work very pythonly and now they are pythoning their way to success."
+porter.stem(sentence)
+'pythoners are very intelligent and work very pythonly and now they are pythoning their way to success.'
+As you see the stemmer sees the entire sentence as a word, so it returns it as it is. We need to stem each word in the sentence and return a combined sentence. To separate the sentence into words, you can use tokenizer. The nltk tokenizer separates the sentence into words as follows. You can create a function and just pass the sentence to the function, and it will give you the stemmed sentence.
+
+from nltk.tokenize import sent_tokenize, word_tokenize
+def stemSentence(sentence):
+    token_words=word_tokenize(sentence)
+    token_words
+    stem_sentence=[]
+    for word in token_words:
+        stem_sentence.append(porter.stem(word))
+        stem_sentence.append(" ")
+    return "".join(stem_sentence)
+
+x=stemSentence(sentence)
+print(x)
+python are veri intellig and work veri pythonli and now they are python their way to success .
+Stemming a document
+You can write your own function that can stem documents. Here is one way to stem a document using Python filing:
+
+Take a document as the input.
+Read the document line by line
+Tokenize the line
+Stem the words
+Output the stemmed words (print on screen or write to a file)
+Repeat step 2 to step 5 until it is to the end of the document.
+Let's do some coding! Open a file, any text file. I have a text file named 'data-science-wiki.txt' in a folder named 'Stemming and Lemmatization' in my working directory of the Python Notebook. You have to provide your complete file path in open() command of Python if it stored in any other directory. You can learn about reading and writing files in Python in detail here.
+
+file=open("Stemming and Lemmatization\data-science-wiki.txt")
+file.read()
+'Data science is an interdisciplinary field that uses scientific methods, processes, algorithms and systems to extract knowledge and insights from data in various forms, both structured and unstructured,[1][2] similar to data mining. \nData science is a "concept to unify statistics, data analysis, machine learning and their related methods" in order to "understand and analyze actual phenomena" with data.[3] It employs techniques and theories drawn from many fields within the context of mathematics, statistics, information science, and computer science. \nTuring award winner Jim Gray imagined data science as a "fourth paradigm" of science (empirical, theoretical, computational and now data-driven) and asserted that "everything about science is changing because of the impact of information technology" and the data deluge.\nIn 2012, when Harvard Business Review called it "The Sexiest Job of the 21st Century",[6] the term "data science" became a buzzword. It is now often used interchangeably with earlier concepts like business analytics,[7] business intelligence, predictive modeling, and statistics. In many cases, earlier approaches and solutions are now simply rebranded as "data science" to be more attractive, which can cause the term to become "dilute[d] beyond usefulness."While many university programs now offer a data science degree, there exists no consensus on a definition or suitable curriculum contents.To its discredit, however, many data-science and big-data projects fail to deliver useful results, often as a result of poor management and utilization of resources. '
+You can see the content of the file using the .read() method altogether. You can maintain the lines in a file in a Python list using .readlines(). You can then use the list to access each line and tokenize and stem the selected line.
+
+file=open("Stemming and Lemmatization\data-science-wiki.txt")
+my_lines_list=file.readlines()
+my_lines_list
+['Data science is an interdisciplinary field that uses scientific methods, processes, algorithms and systems to extract knowledge and insights from data in various forms, both structured and unstructured,[1][2] similar to data mining. \n',
+ 'Data science is a "concept to unify statistics, data analysis, machine learning and their related methods" in order to "understand and analyze actual phenomena" with data.[3] It employs techniques and theories drawn from many fields within the context of mathematics, statistics, information science, and computer science. \n',
+ 'Turing award winner Jim Gray imagined data science as a "fourth paradigm" of science (empirical, theoretical, computational and now data-driven) and asserted that "everything about science is changing because of the impact of information technology" and the data deluge.\n',
+ 'Data Science is now often used interchangeably with earlier concepts like business analytics,[7] business intelligence, predictive modeling, and statistics. In many cases, earlier approaches and solutions are now simply rebranded as "data science" to be more attractive, which can cause the term to become "dilute[d] beyond usefulness."While many university programs now offer a data science degree, there exists no consensus on a definition or suitable curriculum contents.To its discredit, however, many data-science and big-data projects fail to deliver useful results, often as a result of poor management and utilization of resources. ']
+You can now access each line and use the tokenize 'stemSentence()' function you created before to tokenize and stem the line.
+
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.stem import PorterStemmer
+
+porter=PorterStemmer()
+
+def stemSentence(sentence):
+    token_words=word_tokenize(sentence)
+    token_words
+    stem_sentence=[]
+    for word in token_words:
+        stem_sentence.append(porter.stem(word))
+        stem_sentence.append(" ")
+    return "".join(stem_sentence)
+
+print(my_lines_list[0])
+print("Stemmed sentence")
+x=stemSentence(my_lines_list[0])
+print(x)
+Data science is an interdisciplinary field that uses scientific methods, processes, algorithms and systems to extract knowledge and insights from data in various forms, both structured and unstructured,[1][2] similar to data mining.
+
+Stemmed sentence
+data scienc is an interdisciplinari field that use scientif method , process , algorithm and system to extract knowledg and insight from data in variou form , both structur and unstructur , [ 1 ] [ 2 ] similar to data mine .
+You can save the stemmed sentence to a text file using Python writelines() function. Make a list first to store all the stemmed sentences and simply write the list to the file using

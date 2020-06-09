@@ -2,9 +2,9 @@ from os import listdir
 from os.path import isfile, join
 
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
 from lab2.tokenizer.tokenizer import tokenize
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 
 corpus_stopwords = stopwords.words('english')
 
@@ -57,6 +57,40 @@ def get_docs(filename_prefix, dir_path='./samples/'):
     return ret_docs
 
 
+def get_stop_words(tf_idf_d: dict, threshold=0.003):
+    """ stop words are very common across all docs, so their tf-idf value is reeeealy low """
+    ret = []
+    for word in list(tf_idf_d.values())[0].keys():
+        word_total_tf_idf = 0
+        for doc in tf_idf_d.values():
+            word_total_tf_idf += doc[word]
+        # print((word, word_total_tf_idf))
+        if word_total_tf_idf < threshold:
+            ret.append(word)
+    return ret
+
+
+def get_specific_words(tf_idf_d: dict, threshold=0.01):
+    """ specific words are very contextual-related, so their tf-idf value is quite big """
+    ret = []
+    for word in list(tf_idf_d.values())[0].keys():
+        word_total_tf_idf = 0
+        for doc in tf_idf_d.values():
+            word_total_tf_idf += doc[word]
+        # print((word, word_total_tf_idf))
+        if word_total_tf_idf > threshold:
+            ret.append(word)
+    return ret
+
+
+def stem_tokens(tokens: list):
+    porter = PorterStemmer()
+    stems = set([porter.stem(token) for token in tokens])
+    print("# of tokens before stemming: ", len(tokens))
+    print("# of stems: ", len(stems))
+    return stems
+
+
 def process_docs_manual(filename_prefix):
     docs = get_docs(filename_prefix)
     bows = {}
@@ -79,34 +113,13 @@ def process_docs_manual(filename_prefix):
     df = pd.DataFrame(list(tf_idf.values()),
                       index=list(tf_idf.keys()))
     print(df.sort_index())
+    print('list of stop words:', get_stop_words(tf_idf))
+    print('list of specific words:', get_specific_words(tf_idf))
+
+    # stemming
+    print('stems: ', stem_tokens(list(tf_idf.values())[0].keys()))
     pass
 
 
-def process_docs_using_sklearn(filename_prefix):
-    pass
-
-
-process_docs_manual('doc_')
-
-# documentA = 'the man went out for a walk'
-# documentB = 'the children sat around the fire'
-#
-# bow_a = tokenize(documentA)
-# bow_b = tokenize(documentB)
-# unique_words = set(bow_a).union(set(bow_b))
-#
-# num_of_words_a = get_occurrence_dict(unique_words, bow_a)
-# num_of_words_b = get_occurrence_dict(unique_words, bow_b)
-#
-# tf_a = compute_tf(num_of_words_a, bow_a)
-# tf_b = compute_tf(num_of_words_b, bow_b)
-# print(tf_a)
-# print(tf_b)
-#
-# idfs = compute_idf([num_of_words_a, num_of_words_b])
-# print(idfs)
-#
-# tf_idf_a = compute_tf_idf(tf_a, idfs)
-# tf_idf_b = compute_tf_idf(tf_b, idfs)
-#
-# df = pd.DataFrame([tf_idf_a, tf_idf_b])
+# process_docs_manual('doc_')
+process_docs_manual('en_doc_')
