@@ -1,0 +1,65 @@
+processing document text_1.txt ...
+processing document text_2.txt ...
+processing document text_3.txt ...
+processing document text_4.txt ...
+processing document text_5.txt ...
+processing document text_6.txt ...
+processing document text_7.txt ...
+processing document text_8.txt ...
+processing document text_9.txt ...
+processing document text_10.txt ...
+================================================================================
+pair 0: opera , industry
+KL div: -1.3862943611198906
+GS div: 231.08858773101082
+Jacard: 0.014705882352941176
+Cosine: 0.02082005946557395
+
+    Word 1    Word 2  Human (Mean)
+224  opera  industry         1.194 
+
+================================================================================
+pair 1: bank , money
+KL div: -39.15563518247373
+GS div: 345.62684107996665
+Jacard: 0.25616921269095183
+Cosine: 0.612821056731557
+
+   Word 1 Word 2  Human (Mean)
+17   bank  money         6.625 
+
+================================================================================
+pair 2: computer , internet
+KL div: -1.268511325463507
+GS div: 245.6156744860326
+Jacard: 0.03763440860215054
+Cosine: 0.04801429794360784
+
+      Word 1      Word 2  Human (Mean)
+49  computer    internet        6.1250
+50  computer    keyboard        5.9375
+51  computer  laboratory        3.3750
+52  computer        news        1.6875
+53  computer    software        6.1875 
+
+================================================================================
+pair 3: computer , software
+KL div: -70.04453041745704
+GS div: 269.2497749649322
+Jacard: 0.28390367553865653
+Cosine: 0.723305689377174
+
+      Word 1    Word 2  Human (Mean)
+53  computer  software        6.1875 
+
+================================================================================
+pair 4: professor , doctor
+KL div: 17.91409472797746
+GS div: 130.7949999913173
+Jacard: 0.2532051282051282
+Cosine: 0.5709862942011564
+
+        Word 1    Word 2  Human (Mean)
+258  professor  cucumber        0.3125
+259  professor    doctor        6.1250 
+
