@@ -2,6 +2,7 @@ import os
 import string
 from collections import Counter
 
+import numpy as np
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
@@ -57,6 +58,42 @@ def create_dictionary_dir(dir_name: string, words_limit: int = 5000):
     return res.most_common(words_limit)
 
 
+def create_dictionary_indexes(dictionary):
+    """
+    Util method to retrieve consistent wordId by word
+    :param dictionary: dictionary of words
+    :return: dictionary of word:wordId entries
+    """
+    indexes_d = {}
+    word_id = 0
+    for w, _ in dictionary:
+        if w not in indexes_d:
+            indexes_d[w] = word_id
+            word_id += 1
+    return indexes_d
+
+
+def extract_feature(dir_name: string):
+    """
+    :param dir_name: directory where all docs are located
+    :return: Create feature matrix, where row is a doc and a column is a word. Value is occurrences
+    counter in the specified doc.
+    """
+    filenames = [os.path.join(dir_name, f) for f in os.listdir(dir_name)]
+    dictionary = create_dictionary_dir(dir_name)
+    dictionary_indexes = create_dictionary_indexes(dictionary)
+    features_matrix = np.zeros((len(filenames), len(dictionary)))
+
+    doc_id = 0  # for indexing in np.array
+    for f in filenames:
+        doc_dictionary = create_dictionary(f)
+        for w, c in doc_dictionary.items():
+            if w in dictionary:
+                features_matrix[doc_id, dictionary_indexes[w]] = c
+        doc_id += 1
+    return features_matrix
+
+
 if __name__ == '__main__':
-    print(create_dictionary_dir('mails/train'))
+    print(extract_feature('mails/test'))
     pass
